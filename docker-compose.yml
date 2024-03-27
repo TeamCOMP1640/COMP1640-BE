@@ -10,8 +10,8 @@ services:
       POSTGRES_DB: comp1640
       POSTGRES_USER: user
       POSTGRES_PASSWORD: abcdef
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
