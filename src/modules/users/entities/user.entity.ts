@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
 import { AbstractEntity } from '@Entity/abstract.entity';
+import { FacultyEntity } from '@app/modules/falcuties/entities';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -30,4 +31,8 @@ export class UserEntity extends AbstractEntity {
     default: UserRole.GUEST,
   })
   role: UserRole;
+
+  @ManyToMany(() => FacultyEntity, (faculty) => faculty.users)
+  @JoinTable()
+  faculties: FacultyEntity[];
 }
