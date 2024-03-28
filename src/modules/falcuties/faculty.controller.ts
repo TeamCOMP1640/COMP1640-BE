@@ -7,19 +7,15 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
 
-import { FacultyService } from './faculty.service';
-import { FacultyDto } from './dto/faculty.dto';
-import { CreateUserDto } from '@UsersModule/dto/create.dto';
-import { UpdateUserDto } from '@UsersModule/dto/update.dto';
-import { UserEntity } from '@UsersModule/entities';
 import { CreateFacultyDto } from './dto/create.dto';
-import { FacultyEntity } from './entities';
+import { FacultyDto } from './dto/faculty.dto';
 import { UpdateFacultyDto } from './dto/update.dto';
+import { FacultyEntity } from './entities';
+import { FacultyService } from './faculty.service';
 
 @Controller('faculties')
 export class FacultyController {
@@ -59,5 +55,13 @@ export class FacultyController {
     const faculties = await this.facultyService.getFaculties();
 
     return new ResponseItem(faculties, 'Get Faculties Successfully');
+  }
+
+  @Post('/assign-marketingcoor/:id')
+  async assignMarketingCoordinator(
+    @Param('id') facultyId: number,
+    @Param('userId') userId: number,
+  ): Promise<ResponseItem<string>> {
+    return this.facultyService.assignMarketingCoordinator(facultyId, userId);
   }
 }
