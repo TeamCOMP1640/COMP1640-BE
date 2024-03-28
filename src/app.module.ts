@@ -2,9 +2,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { User } from './auth/entity/user.entity';
 import { UsersModule } from '@UsersModule/user.module';
 import { FacultyModule } from './modules/falcuties/faculty.module';
+import { UserEntity } from '@UsersModule/entities';
+import { FacultyEntity } from './modules/falcuties/entities';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { FacultyModule } from './modules/falcuties/faculty.module';
       username: 'user',
       password: 'abcdef',
       database: 'comp1640',
-      entities: [User],
+      entities: [UserEntity, FacultyEntity],
       synchronize: true,
     }),
     AuthModule,
