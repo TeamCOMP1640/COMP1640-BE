@@ -1,7 +1,13 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { AbstractEntity } from '@Entity/abstract.entity';
 import { FacultyEntity } from '@app/modules/falcuties/entities';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -12,17 +18,24 @@ export enum UserRole {
 }
 
 @Entity('users')
-export class UserEntity extends AbstractEntity {
-  @Column({ type: 'varchar', length: 255 })
+export class UserEntity {
+  @PrimaryGeneratedColumn({ type: 'bigint' })
+  id: number;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 10 })
+  @Column({ type: 'varchar', length: 10, nullable: true })
   phone: string;
 
   @Column({ type: 'varchar', length: 50 })
-  name: string;
+  username: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  fullname: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({

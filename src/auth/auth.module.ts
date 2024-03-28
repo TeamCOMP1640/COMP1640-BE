@@ -2,12 +2,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
-import { User } from './entity/user.entity';
+
 import { AuthService } from './auth.service';
+import { UserEntity } from '@UsersModule/entities';
+import { UsersService } from '@UsersModule/user.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([UserEntity])],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, UsersService],
 })
 export class AuthModule {}

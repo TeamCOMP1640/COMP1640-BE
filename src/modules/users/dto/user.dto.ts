@@ -3,5 +3,7 @@ export class UserDto {
 
   phone: string;
 
-  name: string;
+  username: string;
+
+  password: string;
 }
