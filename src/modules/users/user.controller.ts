@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Delete,
+  Query,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
@@ -51,8 +52,16 @@ export class UsersController {
   }
 
   @Get()
-  async getUsers(): Promise<ResponseItem<UserEntity>> {
-    const users = await this.usersService.getUsers();
+  async getUsers(
+    @Query('role') role?: string,
+  ): Promise<ResponseItem<UserEntity>> {
+    let users: UserEntity[];
+    if (role) {
+      users = await this.usersService.getUsersByRole(role);
+    } else {
+      users = await this.usersService.getUsers();
+    }
+
     return new ResponseItem(users, 'Get Users Successfully');
   }
 }

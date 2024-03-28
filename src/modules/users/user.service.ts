@@ -82,4 +82,11 @@ export class UsersService {
   async getUsers(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
+
+  async getUsersByRole(role: string): Promise<UserEntity[]> {
+    return await this.userRepository
+      .createQueryBuilder('users')
+      .where('users.role= :role', { role })
+      .getMany();
+  }
 }
