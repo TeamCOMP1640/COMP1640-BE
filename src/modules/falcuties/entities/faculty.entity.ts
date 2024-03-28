@@ -9,6 +9,9 @@ export class FacultyEntity {
   @Column({ type: 'varchar', length: 50 })
   name: string;
 
+  @Column({ type: 'varchar', length: 50 })
+  enrolment_key: string;
+
   @ManyToMany(() => UserEntity, (user) => user.faculties)
   users: UserEntity[];
 }
