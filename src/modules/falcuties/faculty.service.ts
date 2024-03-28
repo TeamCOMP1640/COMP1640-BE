@@ -11,12 +11,15 @@ import { FacultyEntity } from './entities';
 import { FacultyDto } from './dto/faculty.dto';
 import { CreateFacultyDto } from './dto/create.dto';
 import { UpdateFacultyDto } from './dto/update.dto';
+import { UserEntity, UserRole } from '@UsersModule/entities';
 
 @Injectable()
 export class FacultyService {
   constructor(
     @InjectRepository(FacultyEntity)
     private readonly facultyRepository: Repository<FacultyEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async getFaculty(id: number): Promise<ResponseItem<FacultyDto>> {
@@ -69,5 +72,36 @@ export class FacultyService {
 
   async getFaculties(): Promise<FacultyEntity[]> {
     return this.facultyRepository.find();
+  }
+
+  async assignMarketingCoordinator(
+    facultyId: number,
+    userId: number,
+  ): Promise<ResponseItem<string>> {
+    const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!faculty) {
+      throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    if ((user.role = UserRole.MARKETING_COORDINATOR)) {
+      throw new NotFoundException(
+        `User with ID ${userId} are not marketing coordinator`,
+      );
+    }
+    faculty.users = faculty.users || [];
+    faculty.users.push(user);
+
+    await this.facultyRepository.save(faculty);
+
+    return new ResponseItem(
+      null,
+      `Assign User ${userId} to the faculty successfully  `,
+    );
   }
 }

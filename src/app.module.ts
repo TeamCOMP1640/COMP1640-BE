@@ -6,6 +6,7 @@ import { UsersModule } from '@UsersModule/user.module';
 import { FacultyModule } from './modules/falcuties/faculty.module';
 import { UserEntity } from '@UsersModule/entities';
 import { FacultyEntity } from './modules/falcuties/entities';
+import { AcademicModule } from './modules/academic/academic.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FacultyEntity } from './modules/falcuties/entities';
     AuthModule,
     UsersModule,
     FacultyModule,
+    AcademicModule,
   ],
 })
 export class AppModule {}
