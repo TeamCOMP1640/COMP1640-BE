@@ -6,17 +6,20 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UserEntity } from '@UsersModule/entities/user.entity';
+import { UserEntity, UserRole } from '@UsersModule/entities/user.entity';
 import { ResponseItem } from '@app/common/dtos';
 import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
+import { FacultyEntity } from '../falcuties/entities';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(FacultyEntity)
+    private readonly facultyRepository: Repository<FacultyEntity>,
   ) {}
 
   async getUser(id: number): Promise<ResponseItem<UserDto>> {
@@ -88,5 +91,39 @@ export class UsersService {
       .createQueryBuilder('users')
       .where('users.role= :role', { role })
       .getMany();
+  }
+
+  async enrolToFaculty(
+    facultyId: number,
+    userId: number,
+    enrolmentKey: string,
+  ): Promise<ResponseItem<string>> {
+    const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!faculty) {
+      throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    if (user.role !== UserRole.STUDENT) {
+      throw new NotFoundException(`User with ID ${userId} are not student.`);
+    }
+
+    if (enrolmentKey == faculty.enrolment_key) {
+      faculty.users = faculty.users || [];
+      faculty.users.push(user);
+      await this.facultyRepository.save(faculty);
+    } else {
+      throw new NotFoundException(`This key is incorrect`);
+    }
+
+    return new ResponseItem(
+      null,
+      `Assign User ${userId} to the faculty successfully  `,
+    );
   }
 }

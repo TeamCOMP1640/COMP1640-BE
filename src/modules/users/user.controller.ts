@@ -17,6 +17,7 @@ import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create.dto';
 import { UserEntity } from './entities';
 import { UpdateUserDto } from './dto/update.dto';
+import { EnrolStudentDto } from './dto/enrol.dto';
 
 @Controller('users')
 export class UsersController {
@@ -63,5 +64,17 @@ export class UsersController {
     }
 
     return new ResponseItem(users, 'Get Users Successfully');
+  }
+
+  @Post('enrol/:id')
+  async enrolToFaculty(
+    @Param('id') userId: number,
+    @Body() enrolStudentDto: EnrolStudentDto,
+  ): Promise<ResponseItem<string>> {
+    return this.usersService.enrolToFaculty(
+      enrolStudentDto.facultyId,
+      userId,
+      enrolStudentDto.enrolment_key,
+    );
   }
 }

@@ -4,14 +4,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserEntity } from './entities/user.entity';
 
-import { UsersService } from './user.service';
-import { JsonWebTokenStrategy } from '@app/auth/jwt/jwt.strategy';
+import { Repository } from 'typeorm';
+import { FacultyEntity } from '../falcuties/entities';
 import { UsersController } from './user.controller';
+import { UsersService } from './user.service';
+import { FacultyModule } from '../falcuties/faculty.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([FacultyEntity]),
+    FacultyModule,
+  ],
   controllers: [UsersController],
-  providers: [UsersService, ConfigService, JsonWebTokenStrategy],
+  providers: [UsersService, ConfigService, Repository<FacultyEntity>],
   exports: [UsersService],
 })
 export class UsersModule {}

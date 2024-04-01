@@ -6,10 +6,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserEntity } from '@UsersModule/entities';
 import { UsersService } from '@UsersModule/user.service';
+import { FacultyService } from '@app/modules/falcuties/faculty.service';
+import { FacultyEntity } from '@app/modules/falcuties/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity, FacultyEntity])],
   controllers: [AuthController],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, FacultyService],
 })
 export class AuthModule {}
