@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinTable,
@@ -8,6 +9,7 @@ import {
 
 import { FacultyEntity } from '@app/modules/falcuties/entities';
 import { Exclude } from 'class-transformer';
+import * as bcrypt from 'bcrypt';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -48,4 +50,9 @@ export class UserEntity {
   @ManyToMany(() => FacultyEntity, (faculty) => faculty.users)
   @JoinTable()
   faculties: FacultyEntity[];
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }

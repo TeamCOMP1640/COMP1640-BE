@@ -1,12 +1,14 @@
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
+
 import { UsersModule } from '@UsersModule/user.module';
 import { FacultyModule } from './modules/falcuties/faculty.module';
 import { UserEntity } from '@UsersModule/entities';
 import { FacultyEntity } from './modules/falcuties/entities';
 import { AcademicModule } from './modules/academic/academic.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -24,6 +26,10 @@ import { AcademicModule } from './modules/academic/academic.module';
     UsersModule,
     FacultyModule,
     AcademicModule,
+    JwtModule.register({
+      secret: 'e#9BX@JxK^t68U2h',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
 })
 export class AppModule {}
