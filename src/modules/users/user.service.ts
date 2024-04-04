@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +14,8 @@ import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create.dto';
 import { UpdateUserDto } from './dto/update.dto';
 import { FacultyEntity } from '../falcuties/entities';
+
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -125,5 +129,38 @@ export class UsersService {
       null,
       `Assign User ${userId} to the faculty successfully  `,
     );
+  }
+
+  private async comparePasswords(
+    userPassword: string,
+    currentPassword: string,
+  ) {
+    return await bcrypt.compare(currentPassword, userPassword);
+  }
+
+  async findOneByUsername(username: string): Promise<UserEntity | undefined> {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
+  async validateCredentials({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<UserEntity> {
+    const user = await this.findOneByUsername(username);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    const areEqual = await this.comparePasswords(user.password, password);
+
+    if (!areEqual) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    return user;
   }
 }

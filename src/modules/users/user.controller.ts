@@ -8,6 +8,7 @@ import {
   Post,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
@@ -18,6 +19,7 @@ import { CreateUserDto } from './dto/create.dto';
 import { UserEntity } from './entities';
 import { UpdateUserDto } from './dto/update.dto';
 import { EnrolStudentDto } from './dto/enrol.dto';
+import { AuthenticationGuard } from '../auth/guards/auth.guards';
 
 @Controller('users')
 export class UsersController {
