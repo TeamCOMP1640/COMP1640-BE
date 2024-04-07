@@ -9,6 +9,7 @@ import { FacultyEntity } from './modules/falcuties/entities';
 import { AcademicModule } from './modules/academic/academic.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AcademicEntity } from './modules/academic/entities';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
       username: 'user',
       password: 'abcdef',
       database: 'comp1640',
-      entities: [UserEntity, FacultyEntity],
+      entities: [UserEntity, FacultyEntity, AcademicEntity],
       synchronize: true,
     }),
     AuthModule,
