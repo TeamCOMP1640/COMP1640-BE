@@ -1,10 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { UserEntity } from '@UsersModule/entities';
 import { FacultyEntity } from '../falcuties/entities';
 import { AcademicEntity } from './entities';
+import { ResponseItem } from '@app/common/dtos';
+import { AcademicDto } from './dto/academic.dto';
+import { CreateAcademicDto } from './dto/create.dto';
+import { UpdateAcademicDto } from './dto/update.dto';
 
 @Injectable()
 export class AcademicService {
@@ -13,86 +21,55 @@ export class AcademicService {
     private readonly academicRepository: Repository<AcademicEntity>,
   ) {}
 
-  //   async getFaculty(id: number): Promise<ResponseItem<FacultyDto>> {
-  //     const user = await this.facultyRepository.findOne({
-  //       where: {
-  //         id,
-  //       },
-  //     });
-  //     if (!user) throw new BadRequestException('Falcuty not exist');
+  async getAcademic(id: number): Promise<ResponseItem<AcademicDto>> {
+    const academic = await this.academicRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!academic) throw new BadRequestException('Academic not exist');
 
-  //     return new ResponseItem({ ...user }, 'Get Faculty successfully');
-  //   }
+    return new ResponseItem({ ...academic }, 'Get Academic successfully');
+  }
 
-  //   async createFaculty(
-  //     createFacultyDto: CreateFacultyDto,
-  //   ): Promise<ResponseItem<FacultyEntity>> {
-  //     const newFaculty = this.facultyRepository.create(createFacultyDto);
-  //     this.facultyRepository.save(newFaculty);
-  //     return new ResponseItem(newFaculty, 'Created Faculty Successfully');
-  //   }
+  async createAcademic(
+    createAcademicDto: CreateAcademicDto,
+  ): Promise<ResponseItem<AcademicEntity>> {
+    const newAcademic = this.academicRepository.create(createAcademicDto);
+    this.academicRepository.save(newAcademic);
+    return new ResponseItem(newAcademic, 'Created Academic Successfully');
+  }
 
-  //   async updateFaculty(
-  //     facultyId: number,
-  //     updateFacultyDto: UpdateFacultyDto,
-  //   ): Promise<ResponseItem<FacultyEntity>> {
-  //     const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
-  //     if (!faculty) {
-  //       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
-  //     }
-  //     if (updateFacultyDto.name) faculty.name = updateFacultyDto.name;
-  //     if (updateFacultyDto.enrolment_key)
-  //       faculty.enrolment_key = updateFacultyDto.enrolment_key;
+  async updateFaculty(
+    facultyId: number,
+    updateAcademicDto: UpdateAcademicDto,
+  ): Promise<ResponseItem<AcademicEntity>> {
+    const academic = await this.academicRepository.findOneBy({ id: facultyId });
+    if (!academic) {
+      throw new NotFoundException(`Academic with ID ${facultyId} not found`);
+    }
+    if (updateAcademicDto.year) academic.year = updateAcademicDto.year;
+    if (updateAcademicDto.final_closure_date)
+      academic.final_closure_date = updateAcademicDto.final_closure_date;
 
-  //     this.facultyRepository.save(faculty);
+    this.academicRepository.save(academic);
 
-  //     return new ResponseItem(faculty, 'Updated Faculty Successfully');
-  //   }
+    return new ResponseItem(academic, 'Updated Academic Successfully');
+  }
 
-  //   async deleteFaculty(
-  //     facultyId: number,
-  //   ): Promise<ResponseItem<{ id: number }>> {
-  //     const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
-  //     if (!faculty) {
-  //       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
-  //     }
+  async deleteAcademic(
+    facultyId: number,
+  ): Promise<ResponseItem<{ id: number }>> {
+    const faculty = await this.academicRepository.findOneBy({ id: facultyId });
+    if (!faculty) {
+      throw new NotFoundException(`Academic with ID ${facultyId} not found`);
+    }
 
-  //     await this.facultyRepository.remove(faculty);
-  //     return new ResponseItem({ id: facultyId }, 'Delete Faculty Successfully');
-  //   }
+    await this.academicRepository.remove(faculty);
+    return new ResponseItem({ id: facultyId }, 'Delete Academic Successfully');
+  }
 
-  //   async getFaculties(): Promise<FacultyEntity[]> {
-  //     return this.facultyRepository.find();
-  //   }
-
-  //   async assignMarketingCoordinator(
-  //     facultyId: number,
-  //     userId: number,
-  //   ): Promise<ResponseItem<string>> {
-  //     const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
-  //     const user = await this.userRepository.findOneBy({ id: userId });
-
-  //     if (!faculty) {
-  //       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
-  //     }
-
-  //     if (!user) {
-  //       throw new NotFoundException(`User with ID ${userId} not found`);
-  //     }
-
-  //     if ((user.role = UserRole.MARKETING_COORDINATOR)) {
-  //       throw new NotFoundException(
-  //         `User with ID ${userId} are not marketing coordinator`,
-  //       );
-  //     }
-  //     faculty.users = faculty.users || [];
-  //     faculty.users.push(user);
-
-  //     await this.facultyRepository.save(faculty);
-
-  //     return new ResponseItem(
-  //       null,
-  //       `Assign User ${userId} to the faculty successfully  `,
-  //     );
-  //   }
+  async getAcademics(): Promise<AcademicEntity[]> {
+    return this.academicRepository.find();
+  }
 }
