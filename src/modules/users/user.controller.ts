@@ -1,25 +1,25 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  Delete,
   Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
 
-import { UserDto } from './dto/user.dto';
-import { UsersService } from './user.service';
-import { CreateUserDto } from './dto/create.dto';
-import { UserEntity } from './entities';
-import { UpdateUserDto } from './dto/update.dto';
-import { EnrolStudentDto } from './dto/enrol.dto';
 import { AuthenticationGuard } from '../auth/guards/auth.guards';
+import { CreateUserDto } from './dto/create.dto';
+import { EnrolStudentDto } from './dto/enrol.dto';
+import { UpdateUserDto } from './dto/update.dto';
+import { UserDto } from './dto/user.dto';
+import { UserEntity } from './entities';
+import { UsersService } from './user.service';
 
 @Controller('users')
 export class UsersController {
@@ -54,6 +54,7 @@ export class UsersController {
     return this.usersService.deleteUser(userId);
   }
 
+  @UseGuards(AuthenticationGuard)
   @Get()
   async getUsers(
     @Query('role') role?: string,

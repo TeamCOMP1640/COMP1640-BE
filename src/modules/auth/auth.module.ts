@@ -10,6 +10,7 @@ import { FacultyEntity } from '@app/modules/falcuties/entities';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { JsonWebTokenStrategy } from './jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PassportModule } from '@nestjs/passport';
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, FacultyService],
+  providers: [AuthService, UsersService, FacultyService, JsonWebTokenStrategy],
+  exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}
