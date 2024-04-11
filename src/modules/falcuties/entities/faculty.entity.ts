@@ -1,5 +1,12 @@
 import { UserEntity } from '@UsersModule/entities/user.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { MagazineEntity } from '@app/modules/magazine/entities';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('faculties')
 export class FacultyEntity {
@@ -14,4 +21,7 @@ export class FacultyEntity {
 
   @ManyToMany(() => UserEntity, (user) => user.faculties)
   users: UserEntity[];
+
+  @OneToMany(() => MagazineEntity, (magazine) => magazine.faculty)
+  magazines: MagazineEntity[];
 }
