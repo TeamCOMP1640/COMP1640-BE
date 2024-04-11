@@ -27,6 +27,7 @@ export class FacultyService {
       where: {
         id,
       },
+      relations: ['users'],
     });
     if (!user) throw new BadRequestException('Falcuty not exist');
 
@@ -52,6 +53,17 @@ export class FacultyService {
     if (updateFacultyDto.name) faculty.name = updateFacultyDto.name;
     if (updateFacultyDto.enrolment_key)
       faculty.enrolment_key = updateFacultyDto.enrolment_key;
+    if (updateFacultyDto.users) {
+      const marketing_coordinator = await Promise.all(
+        updateFacultyDto.users.map(async (user) => {
+          const userFound = await this.userRepository.findOneBy({
+            id: user.id,
+          });
+          return userFound;
+        }),
+      );
+      faculty.users = marketing_coordinator;
+    }
 
     this.facultyRepository.save(faculty);
 
@@ -71,7 +83,7 @@ export class FacultyService {
   }
 
   async getFaculties(): Promise<FacultyEntity[]> {
-    return this.facultyRepository.find();
+    return this.facultyRepository.find({ relations: ['users'] });
   }
 
   async assignMarketingCoordinator(
@@ -89,7 +101,7 @@ export class FacultyService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    if ((user.role = UserRole.MARKETING_COORDINATOR)) {
+    if (user.role != UserRole.MARKETING_COORDINATOR) {
       throw new NotFoundException(
         `User with ID ${userId} are not marketing coordinator`,
       );

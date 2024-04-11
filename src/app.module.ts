@@ -10,6 +10,8 @@ import { AcademicModule } from './modules/academic/academic.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AcademicEntity } from './modules/academic/entities';
+import { MagazineEntity } from './modules/magazine/entities';
+import { MagazineModule } from './modules/magazine/magazine.module';
 
 @Module({
   imports: [
@@ -20,13 +22,15 @@ import { AcademicEntity } from './modules/academic/entities';
       username: 'user',
       password: 'abcdef',
       database: 'comp1640',
-      entities: [UserEntity, FacultyEntity, AcademicEntity],
+      entities: [UserEntity, FacultyEntity, AcademicEntity, MagazineEntity],
       synchronize: true,
+      autoLoadEntities: true,
     }),
     AuthModule,
     UsersModule,
     FacultyModule,
     AcademicModule,
+    MagazineModule,
     JwtModule.register({
       secret: 'e#9BX@JxK^t68U2h',
       signOptions: { expiresIn: '1h' },
