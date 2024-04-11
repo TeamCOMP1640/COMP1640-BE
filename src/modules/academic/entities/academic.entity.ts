@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MagazineEntity } from '@app/modules/magazine/entities';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('academics')
 export class AcademicEntity {
@@ -10,4 +11,7 @@ export class AcademicEntity {
 
   @Column({ type: 'date', nullable: true })
   final_closure_date: Date;
+
+  @OneToMany(() => MagazineEntity, (magazine) => magazine.faculty)
+  magazines: MagazineEntity[];
 }
