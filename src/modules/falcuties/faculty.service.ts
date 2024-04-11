@@ -89,7 +89,7 @@ export class FacultyService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    if ((user.role = UserRole.MARKETING_COORDINATOR)) {
+    if (user.role != UserRole.MARKETING_COORDINATOR) {
       throw new NotFoundException(
         `User with ID ${userId} are not marketing coordinator`,
       );
