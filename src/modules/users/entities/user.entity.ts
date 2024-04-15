@@ -4,12 +4,14 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { FacultyEntity } from '@app/modules/falcuties/entities';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import { ArticleEntity } from '@app/modules/article/entities';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -50,6 +52,9 @@ export class UserEntity {
   @ManyToMany(() => FacultyEntity, (faculty) => faculty.users)
   @JoinTable()
   faculties: FacultyEntity[];
+
+  @OneToMany(() => ArticleEntity, (article) => article.user)
+  articles: ArticleEntity[];
 
   @BeforeInsert()
   async hashPassword() {
