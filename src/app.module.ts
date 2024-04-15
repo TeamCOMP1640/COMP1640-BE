@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AcademicEntity } from './modules/academic/entities';
 import { MagazineEntity } from './modules/magazine/entities';
 import { MagazineModule } from './modules/magazine/magazine.module';
+import { ArticleModule } from './modules/article/article.module';
+import { ArticleEntity } from './modules/article/entities';
 
 @Module({
   imports: [
@@ -22,7 +24,13 @@ import { MagazineModule } from './modules/magazine/magazine.module';
       username: 'user',
       password: 'abcdef',
       database: 'comp1640',
-      entities: [UserEntity, FacultyEntity, AcademicEntity, MagazineEntity],
+      entities: [
+        UserEntity,
+        FacultyEntity,
+        AcademicEntity,
+        MagazineEntity,
+        ArticleEntity,
+      ],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -31,6 +39,7 @@ import { MagazineModule } from './modules/magazine/magazine.module';
     FacultyModule,
     AcademicModule,
     MagazineModule,
+    ArticleModule,
     JwtModule.register({
       secret: 'e#9BX@JxK^t68U2h',
       signOptions: { expiresIn: '1h' },

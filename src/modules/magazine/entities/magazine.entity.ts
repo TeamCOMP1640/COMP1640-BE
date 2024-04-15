@@ -1,6 +1,13 @@
 import { AcademicEntity } from '@app/modules/academic/entities';
+import { ArticleEntity } from '@app/modules/article/entities';
 import { FacultyEntity } from '@app/modules/falcuties/entities';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('magazines')
 export class MagazineEntity {
@@ -21,4 +28,7 @@ export class MagazineEntity {
 
   @ManyToOne(() => AcademicEntity, (faculty) => faculty.magazines)
   academic: AcademicEntity;
+
+  @OneToMany(() => ArticleEntity, (article) => article.magazine)
+  articles: ArticleEntity[];
 }
