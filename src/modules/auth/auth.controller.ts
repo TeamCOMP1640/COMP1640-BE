@@ -53,6 +53,8 @@ export class AuthController {
       {
         access_token: await this.jwtService.signAsync(payload),
         role: user.role,
+        id: user.id,
+        name: user.username,
       },
       `Login Successfully `,
     );

@@ -37,6 +37,35 @@ export class MagazineService {
     return new ResponseItem({ ...user }, 'Get Magazine successfully');
   }
 
+  async getMagazineByStudent(
+    studentId: number,
+  ): Promise<ResponseItem<MagazineDto>> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: studentId,
+      },
+      relations: ['faculties'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${studentId} not found`);
+    }
+
+    // Initialize an array to store all magazines
+    let magazines: MagazineEntity[] = [];
+
+    // Loop through the user's faculties
+    for (const faculty of user.faculties) {
+      // Find magazines for each faculty and push them to the magazines array
+      const facultyMagazines = await this.magazineRepository.find({
+        where: { faculty: faculty },
+        relations: ['faculty'], // Optionally load the faculty relationship
+      });
+      magazines = magazines.concat(facultyMagazines);
+    }
+
+    return new ResponseItem(magazines, 'Get Successfully');
+  }
+
   async createMagazine(
     createMagazineDto: CreateMagazineDto,
   ): Promise<ResponseItem<MagazineEntity>> {
@@ -88,7 +117,10 @@ export class MagazineService {
     return new ResponseItem({ id: MagazineId }, 'Delete Magazine Successfully');
   }
 
-  async getMagazines(): Promise<MagazineEntity[]> {
-    return this.magazineRepository.find({ relations: ['faculty'] });
+  async getMagazines(facultyId: number): Promise<MagazineEntity[]> {
+    return this.magazineRepository.find({
+      where: { faculty: { id: facultyId } },
+      relations: ['faculty'],
+    });
   }
 }

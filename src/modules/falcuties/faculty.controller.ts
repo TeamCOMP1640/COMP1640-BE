@@ -64,4 +64,13 @@ export class FacultyController {
   ): Promise<ResponseItem<string>> {
     return this.facultyService.assignMarketingCoordinator(facultyId, userId);
   }
+
+  @Post('/student/:id/:userId')
+  async assignStudent(
+    @Param('id') facultyId: number,
+    @Param('userId') userId: number,
+    @Body() enrolment_key: UpdateFacultyDto,
+  ): Promise<ResponseItem<string>> {
+    return this.facultyService.assignStudent(facultyId, userId, enrolment_key);
+  }
 }
