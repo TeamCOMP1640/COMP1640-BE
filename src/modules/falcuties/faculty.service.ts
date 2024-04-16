@@ -46,7 +46,12 @@ export class FacultyService {
     facultyId: number,
     updateFacultyDto: UpdateFacultyDto,
   ): Promise<ResponseItem<FacultyEntity>> {
-    const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
+    const faculty = await this.facultyRepository.findOne({
+      where: {
+        id: facultyId,
+      },
+      relations: ['users'],
+    });
     if (!faculty) {
       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
     }
@@ -62,7 +67,7 @@ export class FacultyService {
           return userFound;
         }),
       );
-      faculty.users = marketing_coordinator;
+      faculty.users.push(...marketing_coordinator);
     }
 
     this.facultyRepository.save(faculty);
@@ -73,9 +78,17 @@ export class FacultyService {
   async deleteFaculty(
     facultyId: number,
   ): Promise<ResponseItem<{ id: number }>> {
-    const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
+    const faculty = await this.facultyRepository.findOne({
+      where: {
+        id: facultyId,
+      },
+      relations: ['users'],
+    });
     if (!faculty) {
       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
+    }
+    if (faculty.users.length > 0) {
+      throw new NotFoundException(`Cannot delete faculty have user`);
     }
 
     await this.facultyRepository.remove(faculty);
@@ -90,7 +103,12 @@ export class FacultyService {
     facultyId: number,
     userId: number,
   ): Promise<ResponseItem<string>> {
-    const faculty = await this.facultyRepository.findOneBy({ id: facultyId });
+    const faculty = await this.facultyRepository.findOne({
+      where: {
+        id: facultyId,
+      },
+      relations: ['users'],
+    });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!faculty) {
@@ -108,6 +126,48 @@ export class FacultyService {
     }
     faculty.users = faculty.users || [];
     faculty.users.push(user);
+
+    await this.facultyRepository.save(faculty);
+
+    return new ResponseItem(
+      null,
+      `Assign User ${userId} to the faculty successfully  `,
+    );
+  }
+
+  async assignStudent(
+    facultyId: number,
+    userId: number,
+    enrolment_key: UpdateFacultyDto,
+  ): Promise<ResponseItem<string>> {
+    const faculty = await this.facultyRepository.findOne({
+      where: {
+        id: facultyId,
+      },
+      relations: ['users'],
+    });
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!faculty) {
+      throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    if (user.role != UserRole.STUDENT) {
+      throw new NotFoundException(`User with ID ${userId} are not student`);
+    }
+
+    if (enrolment_key.enrolment_key !== faculty.enrolment_key) {
+      throw new NotFoundException(
+        `Wrong ${enrolment_key} enrolment key, please enter again`,
+      );
+    }
+    const users = faculty.users || [];
+    users.push(user);
+    faculty.users = users;
 
     await this.facultyRepository.save(faculty);
 
