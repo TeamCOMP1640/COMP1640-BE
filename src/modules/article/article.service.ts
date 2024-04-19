@@ -11,12 +11,20 @@ import { ArticleDto } from './dto/Article.dto';
 import { CreateArticleDto } from './dto/create.dto';
 import { UpdateArticleDto } from './dto/update.dto';
 import { ArticleEntity } from './entities';
+import { MagazineEntity } from '../magazine/entities';
+import { UserEntity } from '@UsersModule/entities';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly ArticleRepository: Repository<ArticleEntity>,
+    @InjectRepository(MagazineEntity)
+    private readonly magazineRepository: Repository<MagazineEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private cloudinary: CloudinaryService,
   ) {}
 
   async getArticle(id: number): Promise<ResponseItem<ArticleDto>> {
@@ -32,8 +40,25 @@ export class ArticleService {
 
   async createArticle(
     createArticleDto: CreateArticleDto,
+    file: Express.Multer.File,
   ): Promise<ResponseItem<ArticleEntity>> {
     const newArticle = this.ArticleRepository.create(createArticleDto);
+
+    const magazineFounded = await this.magazineRepository.findOneBy({
+      id: createArticleDto.magazine_id,
+    });
+    const userFounded = await this.userRepository.findOneBy({
+      id: createArticleDto.user_id,
+    });
+
+    const result = await this.cloudinary
+      .uploadImage(createArticleDto.file)
+      .catch(() => {
+        throw new BadRequestException('Invalid file type.');
+      });
+    newArticle.image_url = result.secure_url;
+    newArticle.magazine = magazineFounded;
+    newArticle.user = userFounded;
     this.ArticleRepository.save(newArticle);
     return new ResponseItem(newArticle, 'Created Article Successfully');
   }

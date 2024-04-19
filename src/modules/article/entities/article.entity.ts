@@ -25,6 +25,12 @@ export class ArticleEntity {
   @Column({ type: 'date', nullable: true })
   submitted_date: Date;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  image_url: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  file_word_url: string;
+
   @ManyToOne(() => MagazineEntity, (magazine) => magazine.articles)
   magazine: MagazineEntity;
 

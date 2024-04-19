@@ -14,6 +14,8 @@ import { MagazineEntity } from './modules/magazine/entities';
 import { MagazineModule } from './modules/magazine/magazine.module';
 import { ArticleModule } from './modules/article/article.module';
 import { ArticleEntity } from './modules/article/entities';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -44,6 +46,10 @@ import { ArticleEntity } from './modules/article/entities';
       secret: 'e#9BX@JxK^t68U2h',
       signOptions: { expiresIn: '1h' },
     }),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
+    CloudinaryModule,
   ],
 })
 export class AppModule {}
