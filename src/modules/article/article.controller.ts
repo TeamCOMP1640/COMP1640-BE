@@ -7,6 +7,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
@@ -15,6 +17,7 @@ import { ArticleDto } from './dto/Article.dto';
 import { CreateArticleDto } from './dto/create.dto';
 import { ArticleEntity } from './entities';
 import { UpdateArticleDto } from './dto/update.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('Articles')
 export class ArticleController {
@@ -28,10 +31,12 @@ export class ArticleController {
   }
 
   @Post('/create')
+  @UseInterceptors(FileInterceptor('file'))
   async createArticle(
     @Body() createArticle: CreateArticleDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<ResponseItem<ArticleEntity>> {
-    return this.articleService.createArticle(createArticle);
+    return this.articleService.createArticle(createArticle, file);
   }
 
   @Patch('/update/:id')
