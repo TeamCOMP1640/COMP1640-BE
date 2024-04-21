@@ -54,6 +54,13 @@ export class ArticleController {
     return this.articleService.deleteArticle(articleId);
   }
 
+  @Delete('/publication/:id')
+  async publicationArticle(
+    @Param('id') articleId: number,
+  ): Promise<ResponseItem<{ id: number }>> {
+    return this.articleService.publicationArticle(articleId);
+  }
+
   @Get()
   async getArticles(): Promise<ResponseItem<ArticleEntity>> {
     const faculties = await this.articleService.getArticles();

@@ -1,4 +1,5 @@
 import { UserEntity } from '@UsersModule/entities';
+import { CommentEntity } from '@app/modules/comment/entities/comment.entity';
 import { MagazineEntity } from '@app/modules/magazine/entities';
 import {
   Column,
@@ -36,4 +37,7 @@ export class ArticleEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.articles)
   user: UserEntity;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.article)
+  comments: UserEntity[];
 }

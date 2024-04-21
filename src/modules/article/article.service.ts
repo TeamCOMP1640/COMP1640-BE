@@ -92,6 +92,22 @@ export class ArticleService {
     return new ResponseItem({ id: ArticleId }, 'Delete Article Successfully');
   }
 
+  async publicationArticle(
+    ArticleId: number,
+  ): Promise<ResponseItem<{ id: number }>> {
+    const Article = await this.ArticleRepository.findOneBy({ id: ArticleId });
+    if (!Article) {
+      throw new NotFoundException(`Article with ID ${ArticleId} not found`);
+    }
+    Article.status = 'Publication';
+
+    await this.ArticleRepository.save(Article);
+    return new ResponseItem(
+      { id: ArticleId },
+      'Publication Article Successfully',
+    );
+  }
+
   async getArticles(): Promise<ArticleEntity[]> {
     return this.ArticleRepository.find();
   }
