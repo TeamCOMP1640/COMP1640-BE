@@ -16,6 +16,8 @@ import { ArticleModule } from './modules/article/article.module';
 import { ArticleEntity } from './modules/article/entities';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
+import { CommentEntity } from './modules/comment/entities/comment.entity';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { ConfigModule } from '@nestjs/config';
         AcademicEntity,
         MagazineEntity,
         ArticleEntity,
+        CommentEntity,
       ],
       synchronize: true,
       autoLoadEntities: true,
@@ -42,6 +45,7 @@ import { ConfigModule } from '@nestjs/config';
     AcademicModule,
     MagazineModule,
     ArticleModule,
+    CommentModule,
     JwtModule.register({
       secret: 'e#9BX@JxK^t68U2h',
       signOptions: { expiresIn: '1h' },

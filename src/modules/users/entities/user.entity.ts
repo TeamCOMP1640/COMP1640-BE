@@ -12,6 +12,7 @@ import { FacultyEntity } from '@app/modules/falcuties/entities';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ArticleEntity } from '@app/modules/article/entities';
+import { CommentEntity } from '@app/modules/comment/entities/comment.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -55,6 +56,9 @@ export class UserEntity {
 
   @OneToMany(() => ArticleEntity, (article) => article.user)
   articles: ArticleEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments: CommentEntity[];
 
   @BeforeInsert()
   async hashPassword() {
