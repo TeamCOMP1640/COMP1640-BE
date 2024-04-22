@@ -51,11 +51,9 @@ export class ArticleService {
       id: createArticleDto.user_id,
     });
 
-    const result = await this.cloudinary
-      .uploadImage(createArticleDto.file)
-      .catch(() => {
-        throw new BadRequestException('Invalid file type.');
-      });
+    const result = await this.cloudinary.uploadImage(file).catch(() => {
+      throw new BadRequestException('Invalid file type.');
+    });
     newArticle.image_url = result.secure_url;
     newArticle.magazine = magazineFounded;
     newArticle.user = userFounded;
