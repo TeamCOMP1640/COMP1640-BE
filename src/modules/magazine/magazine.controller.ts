@@ -28,6 +28,14 @@ export class MagazineController {
     return await this.magazineService.getMagazine(id);
   }
 
+  @Get('/student/:id')
+  async getMagazineByStudent(
+    @Param('id', ParseIntPipe) studentId: number,
+    // @Param('studentId', ParseIntPipe) studentId: number,
+  ): Promise<ResponseItem<MagazineDto>> {
+    return await this.magazineService.getMagazineByStudent(studentId);
+  }
+
   @Post('/create')
   async createMagazine(
     @Body() createMagazineDto: CreateMagazineDto,
@@ -50,9 +58,11 @@ export class MagazineController {
     return this.magazineService.deleteMagazine(falcutyId);
   }
 
-  @Get()
-  async getMagazines(): Promise<ResponseItem<MagazineEntity>> {
-    const Magazines = await this.magazineService.getMagazines();
+  @Get('/list/:id')
+  async getMagazines(
+    @Param('id') falcutyId: number,
+  ): Promise<ResponseItem<MagazineEntity>> {
+    const Magazines = await this.magazineService.getMagazines(falcutyId);
 
     return new ResponseItem(Magazines, 'Get Magazines Successfully');
   }

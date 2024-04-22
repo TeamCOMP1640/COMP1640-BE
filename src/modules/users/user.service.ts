@@ -31,6 +31,7 @@ export class UsersService {
       where: {
         id,
       },
+      relations: ['faculties'],
     });
     if (!user) throw new BadRequestException('Nhân viên không tồn tại');
 

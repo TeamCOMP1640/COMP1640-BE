@@ -7,9 +7,12 @@ import { MagazineEntity } from './entities/Magazine.entity';
 import { MagazineController } from './magazine.controller';
 import { MagazineService } from './magazine.service';
 import { Repository } from 'typeorm';
+import { FacultyEntity } from '../falcuties/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MagazineEntity, UserEntity])],
+  imports: [
+    TypeOrmModule.forFeature([MagazineEntity, UserEntity, FacultyEntity]),
+  ],
   controllers: [MagazineController],
   providers: [MagazineService, ConfigService, Repository<UserEntity>],
   exports: [MagazineService],
