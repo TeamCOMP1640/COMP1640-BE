@@ -22,6 +22,13 @@ import { FacultyService } from './faculty.service';
 export class FacultyController {
   constructor(private readonly facultyService: FacultyService) {}
 
+  @Get('/dashboard')
+  async getDashboardFaculty(): Promise<ResponseItem<any>> {
+    const faculties = await this.facultyService.getDashboardFaculty();
+
+    return new ResponseItem(faculties, 'Get Faculties Successfully');
+  }
+
   @Get(':id')
   async getFalcuty(
     @Param('id', ParseIntPipe) id: number,
