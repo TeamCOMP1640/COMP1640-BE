@@ -32,6 +32,9 @@ export class ArticleEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   file_word_url: string;
 
+  @Column({ type: 'varchar', length: 2000, nullable: true })
+  publication_content: string;
+
   @ManyToOne(() => MagazineEntity, (magazine) => magazine.articles)
   magazine: MagazineEntity;
 

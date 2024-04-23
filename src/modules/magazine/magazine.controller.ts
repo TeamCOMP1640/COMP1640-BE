@@ -66,4 +66,13 @@ export class MagazineController {
 
     return new ResponseItem(Magazines, 'Get Magazines Successfully');
   }
+
+  @Get('/list/:id')
+  async getMagazinesPublic(
+    @Param('id') falcutyId: number,
+  ): Promise<ResponseItem<MagazineEntity>> {
+    const Magazines = await this.magazineService.getMagazines(falcutyId);
+
+    return new ResponseItem(Magazines, 'Get Magazines Successfully');
+  }
 }

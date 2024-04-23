@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
@@ -24,8 +25,9 @@ export class FacultyController {
   @Get(':id')
   async getFalcuty(
     @Param('id', ParseIntPipe) id: number,
+    @Query('role') role?: string,
   ): Promise<ResponseItem<FacultyDto>> {
-    return await this.facultyService.getFaculty(id);
+    return await this.facultyService.getFaculty(id, role);
   }
 
   @Post('/create')

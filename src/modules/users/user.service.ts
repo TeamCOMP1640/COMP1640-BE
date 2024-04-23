@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { UserEntity, UserRole } from '@UsersModule/entities/user.entity';
 import { ResponseItem } from '@app/common/dtos';
@@ -53,7 +53,7 @@ export class UsersService {
     createUserDto: CreateUserDto,
   ): Promise<ResponseItem<UserEntity>> {
     const newUser = this.userRepository.create(createUserDto);
-    this.userRepository.save(newUser);
+    await this.userRepository.save(newUser);
     return new ResponseItem(newUser, 'Created User Successfully');
   }
 
@@ -72,7 +72,7 @@ export class UsersService {
     if (updateUserDto.password) user.password = updateUserDto.password;
     if (updateUserDto.role) user.role = updateUserDto.role;
 
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
 
     return new ResponseItem(user, 'Updated User Successfully');
   }
@@ -91,11 +91,38 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async getUsersByRole(role: string): Promise<UserEntity[]> {
-    return await this.userRepository
-      .createQueryBuilder('users')
-      .where('users.role= :role', { role })
-      .getMany();
+  async getUsersByRole(role: string, facultyId: number): Promise<UserEntity[]> {
+    let users;
+
+    if (role === UserRole.MARKETING_COORDINATOR) {
+      // Create query builder
+      const query = this.userRepository
+        .createQueryBuilder('users')
+        .leftJoinAndSelect('users.faculties', 'faculty')
+        .where('users.role = :role', { role });
+
+      // Conditionally apply faculty filter
+      if (facultyId) {
+        query.andWhere(
+          'faculty.id = :facultyId OR (faculty.id IS NULL AND users.role = :role)',
+          {
+            facultyId,
+            role,
+          },
+        );
+      }
+
+      // Execute query
+      users = await query.getMany();
+    } else {
+      // Get all other users by their role
+      users = await this.userRepository
+        .createQueryBuilder('users')
+        .where('users.role = :role', { role })
+        .getMany();
+    }
+
+    return users;
   }
 
   async enrolToFaculty(

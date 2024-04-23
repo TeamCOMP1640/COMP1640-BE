@@ -22,23 +22,43 @@ export class FacultyService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getFaculty(id: number): Promise<ResponseItem<FacultyDto>> {
-    const user = await this.facultyRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['users'],
-    });
-    if (!user) throw new BadRequestException('Falcuty not exist');
+  async getFaculty(
+    id: number,
+    role: string,
+  ): Promise<ResponseItem<FacultyDto>> {
+    const faculty = await this.facultyRepository.findOneBy({ id });
+    // Check if faculty exists
+    if (!faculty) throw new BadRequestException('Faculty does not exist');
 
-    return new ResponseItem({ ...user }, 'Get Faculty successfully');
+    // If role is provided, find users with the given role.
+    if (role) {
+      // Retrieve users based on role
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.faculties', 'faculty')
+        .where('user.role = :role', {
+          role: UserRole[role.toUpperCase() as keyof typeof UserRole],
+        })
+        .andWhere('faculty.id = :id', { id: faculty.id })
+        .getMany();
+
+      if (users && users.length > 0) {
+        faculty.users = users;
+      }
+      // If we have users with the given role, attach them to the faculty.
+      if (users && users.length > 0) {
+        faculty.users = users;
+      }
+    }
+
+    return new ResponseItem({ ...faculty }, 'Get Faculty successfully');
   }
 
   async createFaculty(
     createFacultyDto: CreateFacultyDto,
   ): Promise<ResponseItem<FacultyEntity>> {
     const newFaculty = this.facultyRepository.create(createFacultyDto);
-    this.facultyRepository.save(newFaculty);
+    await this.facultyRepository.save(newFaculty);
     return new ResponseItem(newFaculty, 'Created Faculty Successfully');
   }
 
@@ -52,17 +72,22 @@ export class FacultyService {
       },
       relations: ['users'],
     });
+
     if (!faculty) {
       throw new NotFoundException(`Faculty with ID ${facultyId} not found`);
     }
     if (updateFacultyDto.name) faculty.name = updateFacultyDto.name;
     if (updateFacultyDto.enrolment_key)
       faculty.enrolment_key = updateFacultyDto.enrolment_key;
-    if (updateFacultyDto.users) {
+    if (updateFacultyDto.users || updateFacultyDto.guests) {
+      faculty.users = [];
+      await this.facultyRepository.save(faculty);
+      const { users, guests } = updateFacultyDto;
+      const totalUser = [...users, ...guests];
       const marketing_coordinator = await Promise.all(
-        updateFacultyDto.users.map(async (user) => {
+        totalUser.map(async (user) => {
           const userFound = await this.userRepository.findOneBy({
-            id: user.id,
+            id: Number(user),
           });
           return userFound;
         }),
@@ -70,7 +95,7 @@ export class FacultyService {
       faculty.users.push(...marketing_coordinator);
     }
 
-    this.facultyRepository.save(faculty);
+    await this.facultyRepository.save(faculty);
 
     return new ResponseItem(faculty, 'Updated Faculty Successfully');
   }
