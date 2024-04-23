@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { ResponseItem } from '@app/common/dtos';
@@ -16,15 +17,27 @@ import { CreateCommentDto } from './dto/create.dto';
 import { UpdateCommentDto } from './dto/update.dto';
 import { CommentEntity } from './entities';
 
-@Controller('Comments')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly CommentService: CommentService) {}
 
   @Get(':id')
-  async getFalcuty(
-    @Param('id', ParseIntPipe) id: number,
+  async getComment(
+    @Param('id', ParseIntPipe) articleId: number,
+    @Query('user_id') userId: number,
   ): Promise<ResponseItem<CommentDto>> {
-    return await this.CommentService.getComment(id);
+    return await this.CommentService.getComment(articleId, userId);
+  }
+
+  @Get('check/:id')
+  async checkIsCoordinatorComment(
+    @Param('id', ParseIntPipe) articleId: number,
+    @Query('user_id') userId: number,
+  ): Promise<ResponseItem<boolean>> {
+    return await this.CommentService.checkIsCoordinatorComment(
+      articleId,
+      userId,
+    );
   }
 
   @Post('/create')
@@ -35,7 +48,7 @@ export class CommentController {
   }
 
   @Patch('/update/:id')
-  async updateFaculty(
+  async updateComment(
     @Param('id') facultyId: number,
     @Body() updateFacultyDto: UpdateCommentDto,
   ): Promise<ResponseItem<CommentEntity>> {
@@ -43,15 +56,17 @@ export class CommentController {
   }
 
   @Delete('/delete/:id')
-  async deleteFaculty(
+  async deleteComment(
     @Param('id') CommentId: number,
   ): Promise<ResponseItem<{ id: number }>> {
     return this.CommentService.deleteComment(CommentId);
   }
 
   @Get()
-  async getComments(): Promise<ResponseItem<CommentEntity>> {
-    const faculties = await this.CommentService.getComments();
+  async getComments(
+    @Query('article_id') articleId: number,
+  ): Promise<ResponseItem<CommentEntity>> {
+    const faculties = await this.CommentService.getComments(articleId);
 
     return new ResponseItem(faculties, 'Get Comments Successfully');
   }

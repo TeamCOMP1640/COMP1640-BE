@@ -124,6 +124,21 @@ export class FacultyService {
     return this.facultyRepository.find({ relations: ['users'] });
   }
 
+  async getDashboardFaculty(): Promise<any> {
+    const faculties = await this.facultyRepository
+      .createQueryBuilder('faculty')
+      .leftJoin('faculty.magazines', 'magazine')
+      .leftJoin('magazine.articles', 'article')
+      .groupBy('faculty.id')
+      .addSelect('COUNT(article.id)', 'article_count')
+      .getRawMany();
+
+    return faculties.map((faculty) => ({
+      ...faculty,
+      article_count: parseInt(faculty.article_count, 10),
+    }));
+  }
+
   async assignMarketingCoordinator(
     facultyId: number,
     userId: number,
