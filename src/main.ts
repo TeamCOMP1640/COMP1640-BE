@@ -6,7 +6,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   dotenv.config();
   app.enableCors({
-    origin: '*',
+    origin: [
+      'http://localhost:3000',
+      'https://develop--comp1640-son.netlify.app/',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     // allowedHeaders: ['Content-Type', 'Authorization'],
   });

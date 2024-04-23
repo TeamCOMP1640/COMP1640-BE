@@ -54,14 +54,15 @@ export class UsersController {
     return this.usersService.deleteUser(userId);
   }
 
-  @UseGuards(AuthenticationGuard)
+  // @UseGuards(AuthenticationGuard)
   @Get()
   async getUsers(
     @Query('role') role?: string,
+    @Query('facultyId') facultyId?: number,
   ): Promise<ResponseItem<UserEntity>> {
     let users: UserEntity[];
     if (role) {
-      users = await this.usersService.getUsersByRole(role);
+      users = await this.usersService.getUsersByRole(role, facultyId);
     } else {
       users = await this.usersService.getUsers();
     }

@@ -18,6 +18,7 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
 import { CommentEntity } from './modules/comment/entities/comment.entity';
 import { CommentModule } from './modules/comment/comment.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { CommentModule } from './modules/comment/comment.module';
     AcademicModule,
     MagazineModule,
     ArticleModule,
+    AcademicModule,
     CommentModule,
     JwtModule.register({
       secret: 'e#9BX@JxK^t68U2h',
@@ -54,6 +56,9 @@ import { CommentModule } from './modules/comment/comment.module';
       envFilePath: '.env',
     }),
     CloudinaryModule,
+    MulterModule.register({
+      dest: '/upload',
+    }),
   ],
 })
 export class AppModule {}

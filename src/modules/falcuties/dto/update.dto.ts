@@ -4,6 +4,7 @@ export class UpdateFacultyDto {
   name?: string;
   enrolment_key?: string;
   users?: UserDto[];
+  guests?: UserDto[];
 }
 
 export class AssignStudentDto {

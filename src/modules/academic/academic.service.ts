@@ -36,7 +36,7 @@ export class AcademicService {
     createAcademicDto: CreateAcademicDto,
   ): Promise<ResponseItem<AcademicEntity>> {
     const newAcademic = this.academicRepository.create(createAcademicDto);
-    this.academicRepository.save(newAcademic);
+    await this.academicRepository.save(newAcademic);
     return new ResponseItem(newAcademic, 'Created Academic Successfully');
   }
 
@@ -52,7 +52,7 @@ export class AcademicService {
     if (updateAcademicDto.final_closure_date)
       academic.final_closure_date = updateAcademicDto.final_closure_date;
 
-    this.academicRepository.save(academic);
+    await this.academicRepository.save(academic);
 
     return new ResponseItem(academic, 'Updated Academic Successfully');
   }

@@ -13,6 +13,7 @@ import { CreateMagazineDto } from './dto/create.dto';
 import { UpdateMagazineDto } from './dto/update.dto';
 import { UserEntity, UserRole } from '@UsersModule/entities';
 import { FacultyEntity } from '../falcuties/entities';
+import { AcademicEntity } from '../academic/entities';
 
 @Injectable()
 export class MagazineService {
@@ -23,6 +24,8 @@ export class MagazineService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(FacultyEntity)
     private readonly facultyRepository: Repository<FacultyEntity>,
+    @InjectRepository(AcademicEntity)
+    private readonly academicRepository: Repository<AcademicEntity>,
   ) {}
 
   async getMagazine(id: number): Promise<ResponseItem<MagazineDto>> {
@@ -30,7 +33,7 @@ export class MagazineService {
       where: {
         id,
       },
-      relations: ['faculty'],
+      relations: ['faculty', 'academic'],
     });
     if (!user) throw new BadRequestException('Magazine not exist');
 
@@ -72,9 +75,15 @@ export class MagazineService {
     const facultyFounded = await this.facultyRepository.findOneBy({
       id: createMagazineDto.faculty_id,
     });
+
+    const academicFound = await this.academicRepository.findOneBy({
+      id: createMagazineDto.academic_id,
+    });
+
     const newMagazine = this.magazineRepository.create(createMagazineDto);
     newMagazine.faculty = facultyFounded;
-    this.magazineRepository.save(newMagazine);
+    newMagazine.academic = academicFound;
+    await this.magazineRepository.save(newMagazine);
     return new ResponseItem(newMagazine, 'Created Magazine Successfully');
   }
 
@@ -88,7 +97,13 @@ export class MagazineService {
     const facultyFounded = await this.facultyRepository.findOneBy({
       id: updateMagazineDto.faculty_id,
     });
+
+    const academicFound = await this.academicRepository.findOneBy({
+      id: updateMagazineDto.academic_id,
+    });
+
     Magazine.faculty = facultyFounded;
+    Magazine.academic = academicFound;
     if (!Magazine) {
       throw new NotFoundException(`Magazine with ID ${MagazineId} not found`);
     }
@@ -98,7 +113,7 @@ export class MagazineService {
     if (updateMagazineDto.closure_date)
       Magazine.closure_date = updateMagazineDto.closure_date;
 
-    this.magazineRepository.save(Magazine);
+    await this.magazineRepository.save(Magazine);
 
     return new ResponseItem(Magazine, 'Updated Magazine Successfully');
   }
